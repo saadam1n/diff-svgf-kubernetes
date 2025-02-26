@@ -2,3 +2,4 @@ blender/
 dataset/basic/
 render-idk/testing/
 rtd-preprocess/data/
+reformat_all_into_tiles/data
