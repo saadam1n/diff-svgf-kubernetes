@@ -16,7 +16,7 @@ Stuff to process:
 - Noisebase
 """
 
-random.seed(2252025809)
+#random.seed(2252025809)
 
 class FrameSequence:
     def __init__(self, path):
@@ -94,6 +94,8 @@ if __name__ == "__main__":
 
     #for render in all_renders:
     def process_input(render):
+        random.seed(os.getpid())
+
         render_dir = render
         render_path = src_dir + render_dir + "/"
 
@@ -128,5 +130,7 @@ if __name__ == "__main__":
 
                     next_dump_index += 1
     
-    with Pool() as p:
+    with Pool(16) as p:
         p.map(process_input, all_renders)
+
+    print("Done!")

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  infinigen-reformat
+  labels:
+    app:  infinigen-reformat
+spec:
+  selector:
+    matchLabels:
+      app: infinigen-reformat
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  infinigen-reformat
+    spec:
+      containers:
+      - name:  infinigen-reformat
+        image:  saadam1n/rfmt
+        #command: ["python3", "-u", "./script.py", "/mnt/infinigen_output/rendered_images/", "/mnt/rtdenoise_dataset/", "0.05"]
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/infinigen_output/rendered_images/ /mnt/rtdenoise_dataset/ 0.05 && sleep 9999999"]
+        resources:
+          requests:
+            cpu: 32
+            memory: 96Gi
+          limits:
+            cpu: 32
+            memory: 96Gi
+        volumeMounts:
+        - mountPath: /mnt/infinigen_output/
+          name: infinigen-pvc
+        - mountPath: /mnt/rtdenoise_dataset/
+          name: rtdenoise-dataset
+      volumes:
+          - name: infinigen-pvc
+            persistentVolumeClaim:
+              claimName: infinigen-pvc
+          - name: rtdenoise-dataset
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset
