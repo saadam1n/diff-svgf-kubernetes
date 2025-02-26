@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtd-temp-upload-deployment
+spec:
+  selector:
+    matchLabels:
+      app: rtd-temp-upload-deployment
+  template:
+    metadata:
+      labels:
+        app: rtd-temp-upload-deployment
+    spec:
+      containers:
+      - name: rtd-temp-upload-deployment
+        image: busybox
+        command: ["sleep", "9999999"]
+        resources:
+          requests:
+            memory: 4Gi
+            cpu: 8
+          limits:
+            memory: 4Gi
+            cpu: 8
+        volumeMounts:
+        - mountPath: /mnt/dataset/
+          name: rtdenoise-training-dataset
+      volumes:
+      - name: rtdenoise-training-dataset
+        persistentVolumeClaim:
+          claimName: rtdenoise-training-dataset

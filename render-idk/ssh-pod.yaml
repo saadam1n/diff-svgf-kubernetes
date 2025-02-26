@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrooms-ssh-pod
+  labels:
+    name: openrooms-ssh-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: openrooms-ssh-pod
+  template:
+    metadata:
+      labels:
+        name: openrooms-ssh-pod
+    spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
+      containers:
+        - name: openrooms-ssh-pod
+          image: mwendler/wget:latest
+          command: ["sleep", "99999"]
+          resources:
+            requests:
+              memory: "16Gi"
+              cpu: "12"
+            limits:
+              memory: "24Gi"
+              cpu: "16"
+          volumeMounts:
+          - mountPath: /mnt/datasets/
+            name: openrooms-pvc
+      volumes:
+      - name: openrooms-pvc
+        persistentVolumeClaim:
+          claimName: openrooms-pvc

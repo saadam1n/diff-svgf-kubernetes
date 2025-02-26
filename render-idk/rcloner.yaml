@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrooms-downloader
+  labels:
+    name: openrooms-downloader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: openrooms-downloader
+  template:
+    metadata:
+      labels:
+        name: openrooms-downloader
+    spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
+      containers:
+        - name: openrooms-downloader
+          image: rclone/rclone:latest
+          #command: ["rclone", "copy", "--http-url", "http://theia.ucsd.edu/releasingData/", ":http:/", "/mnt/datasets/", "--progress", "-vv", "--ignore-existing", "--checksum"]
+          #command: ["rclone", "copy", "--progress", "--transfers=8", "--http-url", "http://theia.ucsd.edu/releasingData/", ":http:", "/mnt/datasets/", "--ignore-existing", "--no-traverse", "--checksum", "-vv"]
+          #command: ["wget", "-r", "-np", "-nH", "--cut-dirs=1", "http://theia.ucsd.edu/releasingData/"]
+          #command: ["/bin/sh", "-c", "wget --progress=bar:force -r -np -nH --cut-dirs=1 http://theia.ucsd.edu/releasingData/ -P /mnt/datasets/ && echo done && sleep 999999"]
+          #command: ["/bin/sh", "-c", "rclone copy --http-url http://theia.ucsd.edu/releasingData/ :http:/ /mnt/datasets/ --progress -vv --include *.zip && echo done && sleep 999999"]
+          command: ["/bin/sh", "-c", "rclone copy --http-url http://theia.ucsd.edu/releasingData/Images :http:/ /mnt/datasets/ --progress -vv && echo done && sleep 999999"]
+          resources:
+            requests:
+              memory: "16Gi"
+              cpu: "12"
+            limits:
+              memory: "24Gi"
+              cpu: "16"
+          volumeMounts:
+          - mountPath: /mnt/datasets/
+            name: openrooms-pvc
+      volumes:
+      - name: openrooms-pvc
+        persistentVolumeClaim:
+          claimName: openrooms-pvc

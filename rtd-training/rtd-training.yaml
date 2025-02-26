@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtdenoise-training-framework
+  labels:
+    name: rtdenoise-training-framework
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rtdenoise-training-framework
+  template:
+    metadata:
+      labels:
+        name: rtdenoise-training-framework
+    spec:
+      containers:
+      - name: rtdenoise-container-framework
+        image: saadam1n/rtd-training
+        resources:
+          requests:
+            memory: "32Gi"
+            cpu: "8"
+            nvidia.com/gpu: "1" 
+          limits:
+            memory: "48Gi"
+            cpu: "10"
+            nvidia.com/gpu: "1" 
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-GeForce-RTX-3090

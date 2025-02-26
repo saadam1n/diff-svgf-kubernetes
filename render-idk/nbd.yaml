@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noisebase-downloader
+  labels:
+    name: noisebase-downloader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: noisebase-downloader
+  template:
+    metadata:
+      labels:
+        name: noisebase-downloader
+    spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
+      containers:
+        - name: noisebase-downloader
+          image: python:3.9-slim
+          command: ["/bin/sh", "-c", "pip install numpy==1.25.0 setuptools && pip install noisebase && cd /mnt/noisebase/ && nb-download sampleset_v1 && nb-download sampleset_test32_v1 && nb-download sampleset_test8_v1"]
+          resources:
+            requests:
+              memory: "16Gi"
+              cpu: "12"
+            limits:
+              memory: "24Gi"
+              cpu: "16"
+          volumeMounts:
+          - mountPath: /mnt/noisebase/
+            name: noisebase-pvc
+      volumes:
+      - name: noisebase-pvc
+        persistentVolumeClaim:
+          claimName: noisebase-pvc
