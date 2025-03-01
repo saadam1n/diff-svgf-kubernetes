@@ -34,9 +34,9 @@ class FrameSequence:
         self.albedo = self.load_buffer("albedo")
         self.color = self.load_buffer("color")
         self.depth = self.load_buffer("depth")
-        self.motionvec = self.load_buffer("motionvec", ["X", "Y"])
-        self.normal = self.load_buffer("normal", ["X", "Y", "Z"])
-        self.position = self.load_buffer("position", ["X", "Y", "Z"])
+        self.motionvec = self.load_buffer("motionvec", ["xmvc", "ymvc"])
+        self.normal = self.load_buffer("normal")
+        self.position = self.load_buffer("position")
         self.reference = self.load_buffer("reference")
 
         self.resx = self.reference.shape[2]
@@ -52,8 +52,19 @@ class FrameSequence:
     def load_buffer(self, name, channels=None):
         print(f"Loading buffer {name}")
 
-        buffer_list = [exr.imread(self.path + f"{name}{i}.exr", channel_names=channels) for i in range(self.num_frames)]
-        return np.stack(buffer_list)
+        try:
+            buffer_batch = self.load_buffer_batch(name, channels)
+        except:
+            print(f"Failed to load buffer {name} with channel config {channels}. Retrying with default configuration")
+            buffer_batch = self.load_buffer_batch(name, None)
+            buffer_batch = buffer_batch[:, :, :, 0:len(channels)]
+            
+        return buffer_batch
+
+    def load_buffer_batch(self, name, channels):
+        return np.stack([
+            exr.imread(self.path + f"{name}{i}.exr", channel_names=channels) for i in range(self.num_frames)
+        ])
 
     def slice_n_save(self, path, s0, s1, x0, y0, x1, y1, buffer, name):
         for s in range(s0, s1):
