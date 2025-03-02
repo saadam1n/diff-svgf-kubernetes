@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  dataset-copier
+  name:  dataset-copier-no-rsync
   labels:
-    app:  dataset-copier
+    app:  dataset-copier-no-rsync
 spec:
   selector:
     matchLabels:
-      app: dataset-copier
+      app: dataset-copier-no-rsync
   replicas: 1
   template:
     metadata:
       labels:
-        app:  dataset-copier
+        app:  dataset-copier-no-rsync
     spec:
       containers:
-      - name:  dataset-copier
-        image:  eeacms/rsync:latest
-        command: ["/bin/sh", "-c", "rsync -Prc --dry-run  /mnt/rtdenoise_dataset/ /mnt/fast_denoise_dataset/ && echo Freaking finished && sleep 99999999"]
+      - name:  dataset-copier-no-rsync
+        image:  saadam1n/ihatersync
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset/ /mnt/fast_denoise_dataset/ && echo Freaking finished && sleep 99999999"]
         resources:
           requests:
             cpu: 32
