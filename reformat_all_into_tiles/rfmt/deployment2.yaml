@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  dataset-downloader
+  labels:
+    app:  dataset-downloader
+spec:
+  selector:
+    matchLabels:
+      app: dataset-downloader
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  dataset-downloader
+    spec:
+      containers:
+      - name:  dataset-downloader
+        image:  saadam1n/dataset_downloader
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset/ /tmp/ 0.001 0.005 0.07 && sleep 9999999"]
+        resources:
+          requests:
+            cpu: 32
+            memory: 144Gi
+          limits:
+            cpu: 32
+            memory: 144Gi
+        volumeMounts:
+        - mountPath: /mnt/rtdenoise_dataset/
+          name: rtdenoise-dataset
+      volumes:
+          - name: rtdenoise-dataset
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset
+
+
