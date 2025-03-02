@@ -14,17 +14,19 @@ spec:
       labels:
         app:  dataset-copier-no-rsync
     spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
       containers:
       - name:  dataset-copier-no-rsync
         image:  saadam1n/ihatersync
         command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset/ /mnt/fast_denoise_dataset/ && echo Freaking finished && sleep 99999999"]
         resources:
           requests:
-            cpu: 32
-            memory: 144Gi
+            cpu: 64
+            memory: 96Gi
           limits:
-            cpu: 32
-            memory: 144Gi
+            cpu: 64
+            memory: 96Gi
         volumeMounts:
         - mountPath: /mnt/rtdenoise_dataset/
           name: rtdenoise-dataset

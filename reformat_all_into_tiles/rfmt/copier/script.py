@@ -1,6 +1,20 @@
 import os
 import sys
 import shutil
+import time
+import multiprocessing
+
+def copy_folder(src, dst, counter, lock):
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+
+    with lock:
+        counter.value += 1
+
+def monitor_copy_progress(suffix, total, counter):
+    while counter.value < total:
+        print(f"Processed {counter.value}/{total} items for {suffix}")
+        time.sleep(1) 
+    print(f"Processing for {suffix} complete!")
 
 def copy_items(src_dir, dst_dir, suffix):
     actual_src = src_dir + suffix
@@ -8,12 +22,21 @@ def copy_items(src_dir, dst_dir, suffix):
 
     folders = os.listdir(actual_src)
 
-    print(f"Found {len(folders)} items in {suffix}.")
-    for i, folder in enumerate(folders):
-        print(f"\tCopying item {i}\t/{len(folders)}. Item name is {folder}")
-        shutil.copytree(actual_src + folder, actual_dst + folder, dirs_exist_ok=True)
+    with multiprocessing.Manager() as manager:
+        counter = manager.Value("i", 0)
+        lock = manager.Lock()
+        
+        progress_process = multiprocessing.Process(target=monitor_copy_progress, args=(suffix, len(folders), counter))
+        progress_process.start()
 
-    print(f"Done processing {suffix}")
+        with multiprocessing.Pool() as pool:
+            for folder in folders:
+                pool.apply_async(copy_folder, args=(actual_src + folder,  actual_dst + folder, counter, lock))
+            pool.close()
+            pool.join()
+
+        progress_process.join()
+
 
 if __name__ == "__main__":
     if(len(sys.argv) < 2):
