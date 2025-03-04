@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  dataset-tartool
+  labels:
+    app:  dataset-tartool
+spec:
+  selector:
+    matchLabels:
+      app: dataset-tartool
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  dataset-tartool
+    spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
+      containers:
+      - name:  dataset-tartool
+        image:  saadam1n/tartool
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset/ /mnt/rtdenoise_dataset_tar/ && echo Freaking finished && sleep 99999999"]
+        resources:
+          requests:
+            cpu: 64
+            memory: 96Gi
+          limits:
+            cpu: 64
+            memory: 96Gi
+        volumeMounts:
+        - mountPath: /mnt/rtdenoise_dataset/
+          name: rtdenoise-dataset
+        - mountPath: /mnt/rtdenoise_dataset_tar/
+          name: rtdenoise-dataset-tar
+      volumes:
+          - name: rtdenoise-dataset
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset
+          - name: rtdenoise-dataset-tar
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar
+
+
