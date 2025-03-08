@@ -31,9 +31,10 @@ def pool_func(args):
 
     print(f"Processing {i}/{tot} items in {suffix}")
 
-
     if validate_sample(sample_path, 8):
         create_tarball(sample_path, dst)
+
+    shutil.rmtree(sample_path)
 
 if __name__ == "__main__":
     tile_size = 256
@@ -51,9 +52,11 @@ if __name__ == "__main__":
         sfx_src_dir = src_dir + suffix
         sfx_dst_dir = dst_dir + suffix
 
-        os.makedirs(sfx_dst_dir)
+        os.makedirs(sfx_dst_dir, exist_ok=True)
 
         all_folders = os.listdir(sfx_src_dir)
+        all_folders = [folder for folder in all_folders if os.path.isdir(os.path.join(sfx_src_dir, folder))]
+
         pool_args = [(i, len(all_folders), sfx_src_dir + folder + "/", sfx_dst_dir + folder + ".tgz") for i, folder in enumerate(all_folders)]
 
         with multiprocessing.Pool() as pool:

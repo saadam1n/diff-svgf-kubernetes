@@ -19,7 +19,7 @@ spec:
       containers:
       - name:  dataset-tartool
         image:  saadam1n/tartool
-        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset/ /mnt/rtdenoise_dataset_tar/ && echo Freaking finished && sleep 99999999"]
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset_tar_filtered/ /mnt/rtdenoise_dataset_tar_filtered/ && echo Freaking finished && sleep 99999999"]
         resources:
           requests:
             cpu: 64
@@ -28,16 +28,11 @@ spec:
             cpu: 64
             memory: 96Gi
         volumeMounts:
-        - mountPath: /mnt/rtdenoise_dataset/
-          name: rtdenoise-dataset
-        - mountPath: /mnt/rtdenoise_dataset_tar/
-          name: rtdenoise-dataset-tar
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
+          name: rtdenoise-dataset-tar-filtered
       volumes:
-          - name: rtdenoise-dataset
+          - name: rtdenoise-dataset-tar-filtered
             persistentVolumeClaim:
-              claimName: rtdenoise-dataset
-          - name: rtdenoise-dataset-tar
-            persistentVolumeClaim:
-              claimName: rtdenoise-dataset-tar
+              claimName: rtdenoise-dataset-tar-filtered
 
 
