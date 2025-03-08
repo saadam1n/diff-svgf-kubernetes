@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rtdenoise-dataset-tar-filtered
+spec:
+  storageClassName: rook-cephfs
+  accessModes:
+    - ReadWriteOncePod
+  resources:
+    requests:
+      storage: 10Ti

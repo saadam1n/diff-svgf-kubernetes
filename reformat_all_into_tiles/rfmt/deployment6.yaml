@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  datasetfilter
+  labels:
+    app:  datasetfilter
+spec:
+  selector:
+    matchLabels:
+      app: datasetfilter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  datasetfilter
+    spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
+      containers:
+      - name:  datasetfilter
+        image:  saadam1n/datasetfilter
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset_tar/ /mnt/rtdenoise_dataset_tar_filtered/ && echo Freaking finished && sleep 99999999"]
+        resources:
+          requests:
+            cpu: 64
+            memory: 96Gi
+          limits:
+            cpu: 64
+            memory: 96Gi
+        volumeMounts:
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
+          name: rtdenoise-dataset-tar-filtered
+        - mountPath: /mnt/rtdenoise_dataset_tar/
+          name: rtdenoise-dataset-tar
+      volumes:
+          - name: rtdenoise-dataset-tar-filtered
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar-filtered
+          - name: rtdenoise-dataset-tar
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar
+
+
