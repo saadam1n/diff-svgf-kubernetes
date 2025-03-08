@@ -34,7 +34,7 @@ class FrameSequence:
         self.albedo = self.load_buffer("albedo")
         self.color = self.load_buffer("color")
         self.depth = self.load_buffer("depth")
-        self.motionvec = self.load_buffer("motionvec", ["xmvc", "ymvc"])
+        self.motionvec = np.zeros_like(self.color[:, :, :, :2])
         self.normal = self.load_buffer("normal")
         self.position = self.load_buffer("position")
         self.reference = self.load_buffer("reference")
@@ -121,10 +121,13 @@ if __name__ == "__main__":
         # save full resolution component if a test sequence
         if is_test_component:
             print("Current render has been picked to be in test set!")
-            fs.save_sequence(test_fullres_dir + render_dir + "/", 0, fs.num_frames, 0, 0, fs.resx, fs.resy)
         else:
             print("Current render has been picked to be in train set.")
     
+        print("Be aware that this version of the tool automatically saves everything into the full resolution test sequence regardless.")
+        fs.save_sequence(test_fullres_dir + render_dir + "/", 0, fs.num_frames, 0, 0, fs.resx, fs.resy)
+        
+
         print("Dumping tiles!")
         next_dump_index = 0
         for i in range(0, fs.num_frames, seq_len):

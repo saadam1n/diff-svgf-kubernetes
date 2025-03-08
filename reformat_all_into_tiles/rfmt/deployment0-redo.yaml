@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  infinigen-reformat
+  labels:
+    app:  infinigen-reformat
+spec:
+  selector:
+    matchLabels:
+      app: infinigen-reformat
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  infinigen-reformat
+    spec:
+      containers:
+      - name:  infinigen-reformat
+        image:  saadam1n/rfmt
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise-temp-upload-vol3/Datasets/ /mnt/rtdenoise_dataset_tar_filtered/ 0.05 && echo Freaking finished && sleep 9999999"]
+        resources:
+          requests:
+            cpu: 32
+            memory: 144Gi
+          limits:
+            cpu: 32
+            memory: 144Gi
+        volumeMounts:
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
+          name: rtdenoise-dataset-tar-filtered
+
+        - mountPath: /mnt/rtdenoise-temp-upload-vol3/
+          name: rtdenoise-temp-upload-vol3
+          
+      volumes:
+          - name: rtdenoise-dataset-tar-filtered
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar-filtered
+
+          - name: rtdenoise-temp-upload-vol3
+            persistentVolumeClaim:
+              claimName: rtdenoise-temp-upload-vol3
+
+

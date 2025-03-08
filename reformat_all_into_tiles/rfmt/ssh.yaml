@@ -28,9 +28,9 @@ spec:
             memory: "48Gi"
             cpu: "10"
         volumeMounts:
-        - mountPath: /mnt/rtdenoise_dataset/
-          name: rtdenoise-dataset
+        - mountPath: /mnt/raw_rendered/
+          name: rtdenoise-temp-upload-vol3
       volumes:
-          - name: rtdenoise-dataset
+          - name: rtdenoise-temp-upload-vol3
             persistentVolumeClaim:
-              claimName: rtdenoise-dataset
+              claimName: rtdenoise-temp-upload-vol3
