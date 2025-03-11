@@ -17,7 +17,7 @@ spec:
       containers:
       - name:  dataset-downloader
         image:  saadam1n/dataset_downloader
-        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset_tar_filtered/ /tmp/ 0.01 0.02 0.3 && sleep 9999999"]
+        command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset_tar_filtered/ /mnt/rtdenoise_dataset_tar_filtered_mini/ 0.013 0.1 1.0 && sleep 9999999"]
         resources:
           requests:
             cpu: 64
@@ -28,9 +28,14 @@ spec:
         volumeMounts:
         - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
           name: rtdenoise-dataset-tar-filtered
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered_mini/
+          name: rtdenoise-dataset-tar-filtered-mini
       volumes:
           - name: rtdenoise-dataset-tar-filtered
             persistentVolumeClaim:
               claimName: rtdenoise-dataset-tar-filtered
+          - name: rtdenoise-dataset-tar-filtered-mini
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar-filtered-mini
 
 
