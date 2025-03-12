@@ -15,7 +15,7 @@ download_queue = multiprocessing.Queue()
 read_queue = multiprocessing.Queue()
 
 def download_tarball(file):
-    local_path = f"/tmp/local-{hashlib.sha256(file.encode('utf-8')).hexdigest()}/"
+    local_path = os.path.join(os.environ["DOWNLOAD_CACHE"], f"local-{hashlib.sha256(file.encode('utf-8')).hexdigest()}/")
     tarball_path = os.path.join(local_path, "download.tgz")
 
     os.mkdir(local_path)

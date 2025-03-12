@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtdenoise-dataset-ssh
+  labels:
+    name: rtdenoise-dataset-ssh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rtdenoise-dataset-ssh
+  template:
+    metadata:
+      labels:
+        name: rtdenoise-dataset-ssh
+    spec:
+      nodeSelector:
+        nautilus.io/network: "100000"  
+      containers:
+      - name: rtdenoise-dataset-ssh
+        image: python:3.9-slim
+        command: ["/bin/sh", "-c", "sleep 999999"]
+        resources:
+          requests:
+            memory: "32Gi"
+            cpu: "8"
+          limits:
+            memory: "48Gi"
+            cpu: "10"
+        volumeMounts:
+        - mountPath: /mnt/rtdenoise_dataset_filtered_prebatched/
+          name: rtdenoise-dataset-filtered-prebatched
+          
+      volumes:
+          - name: rtdenoise-dataset-filtered-prebatched
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-filtered-prebatched

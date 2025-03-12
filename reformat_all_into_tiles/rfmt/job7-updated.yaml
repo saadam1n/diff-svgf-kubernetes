@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dataset-prebatch
+  labels:
+    name: dataset-prebatch
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name:  dataset-prebatch
+        image:  saadam1n/prebatch
+        command: ["/bin/sh", "-c", "DOWNLOAD_CACHE=/mnt/download_cache python3 -u ./script.py /mnt/rtdenoise_dataset_tar_filtered/ /mnt/rtdenoise_dataset_filtered_prebatched/ 8 40 color albedo normal motionvec && echo Freaking finished && sleep 99999999"]
+        resources:
+          requests:
+            memory: "144Gi"
+            cpu: "64"
+          limits:
+            memory: "144Gi"
+            cpu: "64"
+        volumeMounts:
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
+          name: rtdenoise-dataset-tar-filtered
+        - mountPath: /mnt/rtdenoise_dataset_filtered_prebatched/
+          name: rtdenoise-dataset-filtered-prebatched
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /mnt/download_cache
+          name: download-cache
+      volumes:
+          - name: rtdenoise-dataset-tar-filtered
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar-filtered
+          - name: rtdenoise-dataset-filtered-prebatched
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-filtered-prebatched
+          - name: dshm
+            emptyDir:
+              medium: Memory
+              sizeLimit: 64Gi
+          - name: download-cache
+            emptyDir:
+              medium: Memory
+              sizeLimit: 64Gi
+

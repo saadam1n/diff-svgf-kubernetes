@@ -22,10 +22,10 @@ spec:
         command: ["/bin/sh", "-c", "python3 -u ./script.py /mnt/rtdenoise_dataset_tar/ /mnt/rtdenoise_dataset_tar_filtered/ && echo Freaking finished && sleep 99999999"]
         resources:
           requests:
-            cpu: 64
+            cpu: "64"
             memory: 96Gi
           limits:
-            cpu: 64
+            cpu: "64"
             memory: 96Gi
         volumeMounts:
         - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
